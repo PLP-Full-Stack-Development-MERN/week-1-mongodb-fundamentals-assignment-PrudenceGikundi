@@ -83,3 +83,126 @@
 - Clear and concise documentation.
 - Proper indexing implementation.
 
+
+
+
+# ANSWERS
+# MongoDB Setup and CRUD Operations
+
+## Step 1: Setup MongoDB
+### Install MongoDB locally or create a free cluster on MongoDB Atlas.
+Start the MongoDB server locally:
+```sh
+mongod --dbpath /path/to/data/db
+```
+Verify installation:
+```sh
+mongo --version
+```
+
+## Step 2: Database and Collection Creation
+Open the MongoDB shell or use a Node.js script:
+```sh
+use library
+db.createCollection("books")
+```
+
+## Step 3: Insert Data
+Insert five book records:
+```sh
+db.books.insertMany([
+  { title: "The Pragmatic Programmer", author: "Andrew Hunt", publishedYear: 1999, genre: "Technology", ISBN: "978-0201616224" },
+  { title: "Clean Code", author: "Robert C. Martin", publishedYear: 2008, genre: "Technology", ISBN: "978-0132350884" },
+  { title: "The Hobbit", author: "J.R.R. Tolkien", publishedYear: 1937, genre: "Fantasy", ISBN: "978-0547928227" },
+  { title: "1984", author: "George Orwell", publishedYear: 1949, genre: "Dystopian", ISBN: "978-0451524935" },
+  { title: "The Da Vinci Code", author: "Dan Brown", publishedYear: 2003, genre: "Thriller", ISBN: "978-0307474278" }
+])
+```
+
+## Step 4: Retrieve Data
+Retrieve all books:
+```sh
+db.books.find().pretty()
+```
+Find books by author:
+```sh
+db.books.find({ author: "Robert C. Martin" }).pretty()
+```
+Find books published after 2000:
+```sh
+db.books.find({ publishedYear: { $gt: 2000 } }).pretty()
+```
+
+## Step 5: Update Data
+Update the publishedYear of a book:
+```sh
+db.books.updateOne({ ISBN: "978-0547928227" }, { $set: { publishedYear: 1951 } })
+```
+Add a rating field to all books:
+```sh
+db.books.updateMany({}, { $set: { rating: 4.5 } })
+```
+
+## Step 6: Delete Data
+Delete a book by ISBN:
+```sh
+db.books.deleteOne({ ISBN: "978-0307474278" })
+```
+Remove all books in a specific genre:
+```sh
+db.books.deleteMany({ genre: "Technology" })
+```
+
+## Step 7: Data Modeling for E-Commerce
+### Collections:
+#### Users
+```json
+{
+  "_id": ObjectId,
+  "name": "John Doe",
+  "email": "john@example.com",
+  "address": "123 Main St",
+  "orders": [ObjectId]  // References Orders
+}
+```
+#### Products
+```json
+{
+  "_id": ObjectId,
+  "name": "Laptop",
+  "price": 1000,
+  "category": "Electronics",
+  "stock": 20
+}
+```
+#### Orders
+```json
+{
+  "_id": ObjectId,
+  "userId": ObjectId,  // References Users
+  "products": [{ "productId": ObjectId, "quantity": 2 }],
+  "totalAmount": 2000
+}
+```
+
+## Step 8: Aggregation Pipeline
+Total books per genre:
+```sh
+db.books.aggregate([
+  { $group: { _id: "$genre", count: { $sum: 1 } } }
+])
+```
+Average published year:
+```sh
+db.books.aggregate([
+  { $group: { _id: null, avgYear: { $avg: "$publishedYear" } } }
+])
+```
+Top-rated book:
+```sh
+db.books.find().sort({ rating: -1 }).limit(1)
+```
+
+
+
+
